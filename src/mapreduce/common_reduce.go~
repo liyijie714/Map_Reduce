@@ -6,6 +6,10 @@ import (
 	"os"
 )
 
+// doReduce does the job of a reduce worker: it reads the intermediate
+// key/value pairs (produced by the map phase) for this task, sorts the
+// intermediate key/value pairs by key, calls the user-defined reduce function
+// (reduceF) for each key, and writes the output to disk.
 func doReduce(
 	jobName string, // the name of the whole MapReduce job
 	reduceTaskNumber int, // which reduce task this is
