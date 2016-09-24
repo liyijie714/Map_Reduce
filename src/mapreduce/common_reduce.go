@@ -4,6 +4,7 @@ import (
 
 	"encoding/json"
 	"os"
+	"sort"
 )
 
 func doReduce(
@@ -37,6 +38,13 @@ func doReduce(
 		}
 		file.Close()		
 	}
+
+	var keys []string
+	for key,_ := range keyValues{
+		keys = append(keys, string(key))
+	}
+	
+	sort.Strings(keys)
 		
 	mergeFileName := mergeName(jobName, reduceTaskNumber)
 	mergeFile, err := os.Create(mergeFileName)
@@ -45,7 +53,7 @@ func doReduce(
 	}
 	
 	enc := json.NewEncoder(mergeFile)
-	for key,_ := range keyValues {
+	for _,key := range keys{
 		res := reduceF(key, keyValues[key])
 		enc.Encode(&KeyValue{key, res})
 	}

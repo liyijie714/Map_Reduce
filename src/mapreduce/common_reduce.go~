@@ -4,12 +4,9 @@ import (
 
 	"encoding/json"
 	"os"
+	"sort"
 )
 
-// doReduce does the job of a reduce worker: it reads the intermediate
-// key/value pairs (produced by the map phase) for this task, sorts the
-// intermediate key/value pairs by key, calls the user-defined reduce function
-// (reduceF) for each key, and writes the output to disk.
 func doReduce(
 	jobName string, // the name of the whole MapReduce job
 	reduceTaskNumber int, // which reduce task this is
@@ -41,6 +38,13 @@ func doReduce(
 		}
 		file.Close()		
 	}
+
+	var keys []string
+	for key,_ := range keyValues{
+		keys = append(keys, string(key))
+	}
+	
+	sort.Strings(keys)
 		
 	mergeFileName := mergeName(jobName, reduceTaskNumber)
 	mergeFile, err := os.Create(mergeFileName)
@@ -49,7 +53,7 @@ func doReduce(
 	}
 	
 	enc := json.NewEncoder(mergeFile)
-	for key,_ := range keyValues {
+	for _,key := range keys{
 		res := reduceF(key, keyValues[key])
 		enc.Encode(&KeyValue{key, res})
 	}
