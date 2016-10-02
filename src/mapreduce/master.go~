@@ -86,7 +86,6 @@ func Distributed(jobName string, files []string, nreduce int, master string) (mr
 	return
 }
 
-
 // run executes a mapreduce job on the given number of mappers and reducers.
 //
 // First, it divides up the input file among the given number of mappers, and
